@@ -14,7 +14,7 @@ var textbox = null # Store the reference here
 var position_history: Array[Vector2] = []
 
 func _ready():
-	# 1. Find the Textbox ONCE at the start, not every frame
+	# 1. Find the Textbox
 	textbox = get_tree().current_scene.find_child("Textbox", true, false)
 	
 	if Global.target_spawn_name != "":
@@ -52,10 +52,9 @@ func _process(_delta):
 	input_vector.y = Input.get_axis("ui_up", "ui_down")
 	
 	if input_vector != Vector2.ZERO:
-		# REMOVED: The code that forced input_vector.y = 0
 		
 		# Allow diagonals by rounding the normalized vector
-		# (0.7, 0.7) becomes (1, 1) -> Moving diagonally
+		# (0.7, 0.7) becomes (1, 1) when Moving diagonally
 		input_vector = input_vector.normalized().round()
 		
 		var is_running = Input.is_action_pressed("shift")
@@ -112,7 +111,6 @@ func move_smoothly(step_vector, anim_name, duration):
 	var tween = create_tween()
 	tween.tween_property(self, "position", position + step_vector, duration)
 	
-	# FIX: Use tween callbacks instead of timers for perfect sync
 	tween.parallel().tween_callback(func(): 
 		animations.frame = mid_frame
 	).set_delay(duration / 2.0)
