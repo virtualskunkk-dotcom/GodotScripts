@@ -143,9 +143,6 @@ func _process_dialogue_line(line: DialogueLine):
 		# Type text
 		label.text = line.text
 		label.visible_ratio = 0.0
-		
-		# Change 'var tween' to 'typing_tween'
-
 
 		typing_tween = create_tween()
 		current_state = State.TYPING
@@ -164,7 +161,6 @@ func _process_dialogue_line(line: DialogueLine):
 	
 	# 5. Decide What Happens Next (Choices/Next/End)
 	if line.responses.size() > 0:
-		# Don't reset last_character here so it stays correct after choice
 		if thought_container.position.y == thought_target_y:
 			await _animate_thought_out()
 		else:
@@ -207,7 +203,6 @@ func _display_choices(responses: Array):
 		new_btn.text = response.text
 		new_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		new_btn.custom_minimum_size.x = choice_menu.size.x / (2 if responses.size() > 2 else 1)
-		# --- NEW COLOR LOGIC ---
 		# 1. Reset to default
 		new_btn.self_modulate = Color(1, 1, 1, 1)
 		
@@ -284,7 +279,6 @@ func _animate_main_box_out():
 	current_state = State.HIDDEN
 
 func _animate_thought_bubble(thought_text: String):
-	# Don't set State.TYPING yet! Let's call it State.SLIDING_IN (or just leave it)
 	thought_label.text = thought_text
 	thought_label.visible_ratio = 0.0
 	
@@ -296,7 +290,6 @@ func _animate_thought_bubble(thought_text: String):
 	
 	await thought_background.animation_finished
 	
-	# NOW we start typing
 	current_state = State.TYPING
 	typing_tween = create_tween()
 	typing_tween.tween_property(thought_label, "visible_ratio", 1.0, thought_text.length() * typing_speed)
