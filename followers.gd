@@ -6,9 +6,8 @@ var parent_node = null
 var follow_index = 2 # Keeps them 48px behind
 var is_moving = false
 
-# --- NEW: Match Player's "Step Toggle" Logic ---
-var step_toggle = false 
-# -----------------------------------------------
+# Match Player's Step Toggle Logic
+var step_toggle = false
 
 var position_history: Array[Vector2] = []
 
@@ -29,12 +28,12 @@ func move_to_tile(target_pos: Vector2):
 	var anim_name = get_anim_name(direction)
 	
 	# 2. Setup Frames (Exact copy of Player Logic)
-	# 0 = Left Step, 1 = Stand, 2 = Right Step, 3 = Stand (Assuming 4-frame sheet)
+	# 0 = stand, 1 = step1, 2 = stand, 3 = step2
 	var start_frame = 0 if not step_toggle else 2
 	var mid_frame = 1 if not step_toggle else 3
 	var end_frame = 2 if not step_toggle else 0
 	
-	# Set initial frame manually (No .play()!)
+	# Set initial frame manually
 	animations.animation = anim_name
 	animations.frame = start_frame
 	
@@ -43,7 +42,7 @@ func move_to_tile(target_pos: Vector2):
 	# Use TRANS_LINEAR for that constant speed look
 	tween.tween_property(self, "global_position", target_pos, 0.25).set_trans(Tween.TRANS_LINEAR)
 	
-	# Callback: Switch to "Mid Frame" exactly halfway through the step
+	# Callback: Switch to mid frame exactly halfway through the step
 	tween.parallel().tween_callback(func(): 
 		animations.frame = mid_frame
 	).set_delay(0.25 / 2.0)
@@ -54,7 +53,7 @@ func move_to_tile(target_pos: Vector2):
 	animations.frame = end_frame
 	step_toggle = !step_toggle # Flip the toggle for the next step
 	
-	# Record history
+	# Record history (for next follower)
 	position_history.push_front(global_position)
 	if position_history.size() > 20: position_history.pop_back()
 	
